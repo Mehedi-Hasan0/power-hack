@@ -6,18 +6,51 @@ import img from "../../assets/login/Computer login-bro.png";
 import Header from "../../shared/Header/Header";
 
 const Login = () => {
-  // pending to impliment the logic of signin only ui done now
-  //   const {
-  //     register,
-  //     handleSubmit,
-  //     formState: { errors },
-  //   } = useForm();
-  //   const [loginError, setLoginError] = useState("");
-  //   const location = useLocation();
-  //   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  //   const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || "/";
 
+  const handleLogin = (data) => {
+    console.log(email, password, data, "data");
+    fetch("http://localhost:5000/api/login", {
+      method: "POST",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "userRegister");
+        setLoginError("");
+        if (data.status == "ok") {
+          alert("login successful");
+          window.localStorage.setItem("token", data.data);
+          window.localStorage.setItem("loggedIn", true);
+
+          window.location.href = "./userDetails";
+        } else if (data.error == "InvAlid Password") {
+          setLoginError(data.error);
+        } else {
+          setLoginError("User Not found");
+        }
+      });
+  };
   return (
     <>
       <Header />
@@ -27,50 +60,47 @@ const Login = () => {
         </div>
         <div className=" p-8 md:shadow-lg shadow-none md:max-w-96 max-w-80 rounded-xl">
           <h3 className=" text-xl text-black text-center">Login</h3>
-          <form>
+          <form onSubmit={handleSubmit(handleLogin)}>
             <div className=" form-control w-full max-w-xs text-black">
               <label className="label">
                 <span className=" label-text text-neutral">Email</span>
               </label>
               <input
-                type="text"
-                //   {...register("email", { required: "Email is required" })}
+                type="email"
+                {...register("email", { required: "Email is required" })}
                 className="input input-bordered mb-2"
+                onChange={(e) => setEmail(e.target.value)}
               />
-              {/* {errors.email && (
-              <p className="text-red-400 text-xs">{errors.email?.message}</p>
-            )} */}
+              {errors.email && (
+                <p className="text-red-400 text-xs">{errors.email?.message}</p>
+              )}
             </div>
-            <div className=" form-control w-full max-w-xs text-black">
+            <div className=" form-control w-full max-w-xs text-black mb-5">
               <label className="label">
                 <span className=" label-text text-neutral">Password</span>
               </label>
               <input
                 type="password"
-                //   {...register("password", {
-                //     required: "Password is required",
-                //     minLength: {
-                //       value: 6,
-                //       message: "Password must be 6 characters or longer",
-                //     },
-                //   })}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be 6 characters or longer",
+                  },
+                })}
                 className="input input-bordered"
+                onChange={(e) => setPassword(e.target.value)}
               />
-              <label className="label">
-                <small className=" text-neutral mb-2">Forgot Password?</small>
-              </label>
-              {/* {errors.password && (
-              <p className="text-red-400 text-xs mb-5">
-                {errors.password?.message}
-              </p>
-            )} */}
+              {errors.password && (
+                <p className="text-red-400 text-xs mb-5">
+                  {errors.password?.message}
+                </p>
+              )}
             </div>
             <div>
-              {/* {loginError && (
-              <p className="text-red-400 text-xs mb-3">
-                {loginError.slice(22, -2)}
-              </p>
-            )} */}
+              {loginError && (
+                <p className="text-red-400 text-xs mb-3">{loginError}</p>
+              )}
             </div>
             <input
               type="submit"

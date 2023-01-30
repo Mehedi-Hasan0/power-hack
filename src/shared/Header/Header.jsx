@@ -1,7 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ userData }) => {
+  const navigate = useNavigate();
+  const logOut = () => {
+    window.localStorage.clear();
+    navigate("/login");
+  };
   return (
     <>
       <nav className=" bg-slate-300">
@@ -11,11 +16,21 @@ const Header = () => {
           </p>
           <div>
             <Link to="/" className=" text-sm font-medium mr-4">
-              BILL
+              Bill
             </Link>
-            <Link to="/login" className=" text-sm font-medium capitalize">
-              LOGIN
-            </Link>
+            {userData ? (
+              <Link
+                onClick={logOut}
+                to="/login"
+                className=" text-sm font-medium capitalize"
+              >
+                Logout
+              </Link>
+            ) : (
+              <Link to="/login" className=" text-sm font-medium capitalize">
+                Login
+              </Link>
+            )}
           </div>
           <p>Paid Total: 0</p>
         </div>

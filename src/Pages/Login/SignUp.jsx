@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -10,20 +11,48 @@ const SignUp = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [value, setValue] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [signUpError, setSignUpError] = useState("");
-  //   const navigate = useNavigate();
-  //   const location = useLocation();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [userType, setUserType] = useState("");
+  const [secretKey, setSecretKey] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  //   const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || "/";
 
+  //////////
   const handleSignUp = (data) => {
-    console.log(data);
+    console.log(name, email, password, data, "data");
+    fetch("http://localhost:5000/api/registration", {
+      method: "POST",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, data.error, "userRegister");
+        if (data.status == "ok") {
+          alert("Registration Successful");
+          navigate(from, { replace: true });
+        } else if (data.error == "User Exists") {
+          alert("User already exists");
+        } else {
+          alert("Something went wrong");
+        }
+      });
   };
+
+  /////////
   return (
     <>
       <Header />
@@ -43,9 +72,7 @@ const SignUp = () => {
                 type="text"
                 name="name"
                 className="input input-bordered mb-2"
-                onChange={(e) =>
-                  setValue({ ...value, [e.target.name]: e.target.value })
-                }
+                onChange={(e) => setName(e.target.value)}
               />
               {errors.name && (
                 <p className=" text-red-400 text-xs">{errors.name?.message}</p>
@@ -60,9 +87,7 @@ const SignUp = () => {
                 type="email"
                 name="email"
                 className="input input-bordered mb-2"
-                onChange={(e) =>
-                  setValue({ ...value, [e.target.name]: e.target.value })
-                }
+                onChange={(e) => setEmail(e.target.value)}
               />
               {errors.email && (
                 <p className=" text-red-400 text-xs">{errors.email?.message}</p>
@@ -88,9 +113,7 @@ const SignUp = () => {
                 type="password"
                 name="password"
                 className="input input-bordered"
-                onChange={(e) =>
-                  setValue({ ...value, [e.target.name]: e.target.value })
-                }
+                onChange={(e) => setPassword(e.target.value)}
               />
               {errors.password && (
                 <p className=" text-red-400 text-xs my-2">
