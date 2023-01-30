@@ -6,7 +6,7 @@ const UserHome = ({ userData }) => {
   return (
     <>
       <Header userData={userData} />
-      <Body />
+      <Body userData={userData} />
     </>
   );
 };

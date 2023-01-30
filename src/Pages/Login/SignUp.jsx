@@ -24,7 +24,7 @@ const SignUp = () => {
   //////////
   const handleSignUp = (data) => {
     console.log(name, email, password, data, "data");
-    fetch("http://localhost:5000/api/registration", {
+    fetch("https://power-hack-server-livid.vercel.app/api/registration", {
       method: "POST",
       crossDomain: true,
       headers: {

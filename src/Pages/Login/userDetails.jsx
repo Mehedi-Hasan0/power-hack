@@ -6,7 +6,7 @@ export default function UserDetails() {
   const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:5000/userData", {
+    fetch("https://power-hack-server-livid.vercel.app/userData", {
       method: "POST",
       crossDomain: true,
       headers: {
